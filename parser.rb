@@ -6,8 +6,6 @@ require 'net/http'
 
 require 'mongo'
 
-require 'daemons'
-
 require 'listen'
 
 class ReportParser
@@ -108,12 +106,6 @@ class ReportParser
   end
 end
 
-if $0 == __FILE__
-
-  if ARGV[0] == "-d"
-    Daemons.daemonize
-  end
-
   db = Mongo::MongoClient.new("localhost").db("zrapport")
   @reports = db[:reports]
   @receipts = db[:receipts]
@@ -155,23 +147,12 @@ if $0 == __FILE__
     end
   end
 
-  if ARGV[0] == "-d"
-    l = Listen.to("#{Dir.home}/Dropbox/CYB - Økonomi/zrapport", only: /\.DT[0-9T]/) do |m, a, d|
-      for f in a do
-        process_file f
-      end
-    end
-
-    l.start
-
-    sleep 60
-  else
-    ARGV.each do |arg|
-      if File.directory? arg
-        process_dir arg
-      else
-        process_file arg
-      end
-    end
+  l = Listen.to("#{Dir.home}/Dropbox/CYB - Økonomi/zrapport", only: /\.DT[0-9T]/) do |m, a, d|
+  for f in a do
+  process_file f
   end
-end
+  end
+
+  l.start
+
+  sleep

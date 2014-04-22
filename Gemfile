@@ -1,6 +1,7 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
+gem 'bson_ext'
 gem 'listen'
 gem 'unicode'
 gem 'mongo'
